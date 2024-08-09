@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Exercise Finder</title>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Edu+NSW+ACT+Foundation&display=swap"
+    />
+    <style>
+      body {
+        font-family: "Edu NSW ACT Foundation", cursive;
+        font-size: larger;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+      header {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      header img {
+        max-width: 500px;
+        height: auto;
+      }
+      h1,
+      h2 {
+        color: #ff9d00;
+      }
+
+      form {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 500px;
+      }
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+        font-size: 20px;
+      }
+      input[type="text"] {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 16px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 16px;
+        font-family: "Edu NSW ACT Foundation", cursive;
+        font-size: larger;
+        text-align: center;
+        box-sizing: border-box;
+      }
+      button {
+        width: 100%;
+        padding: 10px;
+        background-color: #ff9d00;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: larger;
+        font-family: "Edu NSW ACT Foundation", cursive;
+      }
+      button:hover {
+        background-color: #e68a00;
+      }
+      pre {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 500px;
+        overflow-x: auto;
+        font-family: "Edu NSW ACT Foundation", cursive;
+        font-size: larger;
+        white-space: pre-wrap;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <img src="/logo.png" alt="Exercise Finder Logo" />
+    </header>
+    <form id="exerciseForm">
+      <label for="name">Exercise Name:</label>
+      <input type="text" id="name" name="name" required />
+      <label for="muscle">Muscle:</label>
+      <input type="text" id="muscle" name="muscle" required />
+      <button type="submit">Submit</button>
+    </form>
+    <h2>Response:</h2>
+    <pre id="response"></pre>
+
+    <script>
+      document
+        .getElementById("exerciseForm")
+        .addEventListener("submit", async function (event) {
+          event.preventDefault();
+
+          const name = document.getElementById("name").value;
+          const muscle = document.getElementById("muscle").value;
+
+          const responseElement = document.getElementById("response");
+          responseElement.textContent = "Loading...";
+
+          try {
+            const response = await fetch("/exercises", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ name, muscle }),
+            });
+
+            if (!response.ok) {
+              const errorData = await response.json();
+              responseElement.textContent = "Error: " + errorData.error;
+              return;
+            }
+
+            const data = await response.json();
+            responseElement.textContent = JSON.stringify(data, null, 2);
+          } catch (error) {
+            responseElement.textContent = "Error: " + error.toString();
+          }
+        });
+    </script>
+  </body>
+</html>
